@@ -2,11 +2,10 @@ import socket
 from threading import Thread
 
 from pynput.keyboard import Controller, Key
-from pynput.mouse import Button, Controller
 from screeninfo import get_monitors
 
 SERVER = None
-PORT = 8000
+PORT = 8080
 IP_ADDRESS = "192.168.0.100"
 screen_width = None
 screen_height = None
@@ -19,7 +18,7 @@ def acceptConnections():
     while True:
         client_socket, addr = SERVER.accept()
         print(f"Connection established with {client_socket} : {addr}")
-        thread1 = Thread(target=recvMsg, args=(client_socket))
+        thread1 = Thread(target=recvMsg, args=(client_socket,))
         thread1.start()
 
 
@@ -35,12 +34,13 @@ def recvMsg(client_socket):
     global keyboard
     while True:
         try:
-            message = client_socket.recv(2048).decode()
+            message = client_socket.recv(4096).decode()
+            print(message)
             if message:
                 keyboard.press(message)
                 keyboard.release(message)
                 print(message)
-        except Exception as error:
+        except Exception:
             pass
 
 
